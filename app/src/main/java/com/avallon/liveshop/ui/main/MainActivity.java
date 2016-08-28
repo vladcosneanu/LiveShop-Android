@@ -1,5 +1,6 @@
-package com.avallon.liveshop;
+package com.avallon.liveshop.ui.main;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,8 +14,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.avallon.liveshop.R;
+import com.avallon.liveshop.ui.main.favorites.FavoritesFragment;
+import com.avallon.liveshop.ui.main.friends.FriendsFragment;
+import com.avallon.liveshop.ui.main.home.HomeFragment;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private enum Screen {
+        HOME, FAVORITE, FRIENDS
+    }
+
+    private HomeFragment homeFragment;
+    private FavoritesFragment favoritesFragment;
+    private FriendsFragment friendsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +54,15 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        navigationView.getMenu().getItem(0).setChecked(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        attachFragment(Screen.HOME);
     }
 
     @Override
@@ -80,22 +103,50 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        if (id == R.id.nav_home) {
+            attachFragment(Screen.HOME);
+        } else if (id == R.id.nav_favorites) {
+            attachFragment(Screen.FAVORITE);
+        } else if (id == R.id.nav_friends) {
+            attachFragment(Screen.FRIENDS);
+        } else if (id == R.id.nav_sign_out) {
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void attachFragment(Screen screen) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+
+        switch (screen) {
+            case HOME:
+                if (homeFragment == null) {
+                    homeFragment = new HomeFragment();
+                }
+                fragmentTransaction.replace(R.id.fragment_container, homeFragment);
+
+                break;
+            case FAVORITE:
+                if (favoritesFragment == null) {
+                    favoritesFragment = new FavoritesFragment();
+                }
+                fragmentTransaction.replace(R.id.fragment_container, favoritesFragment);
+
+                break;
+            case FRIENDS:
+                if (friendsFragment == null) {
+                    friendsFragment = new FriendsFragment();
+                }
+                fragmentTransaction.replace(R.id.fragment_container, friendsFragment);
+
+                break;
+        }
+
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commitAllowingStateLoss();
     }
 }
