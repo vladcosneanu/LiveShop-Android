@@ -11,5 +11,9 @@
     <string name="home">Home</string>
     <string name="account">Account</string>
     <string name="loading">Loading&#8230;</string>
+    <string name="sign_out_title">Sign out</string>
+    <string name="sign_out_message">Are you sure you wish to sign out?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

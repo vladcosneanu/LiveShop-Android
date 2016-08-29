@@ -1,9 +1,13 @@
 package com.avallon.liveshop.ui.main;
 
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,11 +17,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.avallon.liveshop.R;
 import com.avallon.liveshop.ui.main.favorites.FavoritesFragment;
 import com.avallon.liveshop.ui.main.friends.FriendsFragment;
 import com.avallon.liveshop.ui.main.home.HomeFragment;
+import com.avallon.liveshop.ui.signin.SignInActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -29,6 +37,8 @@ public class MainActivity extends AppCompatActivity
     private HomeFragment homeFragment;
     private FavoritesFragment favoritesFragment;
     private FriendsFragment friendsFragment;
+    private TextView mUserNameTextView;
+    private TextView mUserEmailTexVview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +63,19 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = LayoutInflater.from(this).inflate(R.layout.nav_header_main, navigationView, false);
+        navigationView.addHeaderView(headerView);
         navigationView.setNavigationItemSelectedListener(this);
 
         navigationView.getMenu().getItem(0).setChecked(true);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         attachFragment(Screen.HOME);
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        mUserNameTextView = (TextView) headerView.findViewById(R.id.user_name_text);
+        mUserNameTextView.setText(currentUser.getDisplayName());
+        mUserEmailTexVview = (TextView) headerView.findViewById(R.id.user_email_text);
+        mUserEmailTexVview.setText(currentUser.getEmail());
     }
 
     @Override
@@ -110,7 +123,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_friends) {
             attachFragment(Screen.FRIENDS);
         } else if (id == R.id.nav_sign_out) {
-
+            displaySignOutDialog();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -146,7 +159,23 @@ public class MainActivity extends AppCompatActivity
         }
 
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    private void displaySignOutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.sign_out_title);
+        builder.setMessage(R.string.sign_out_message);
+
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(MainActivity.this, SignInActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton(R.string.no, null);
+        builder.show();
     }
 }
