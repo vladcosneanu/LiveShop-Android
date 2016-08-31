@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name">LiveShop</string>
+    <string name="facebook_app_id">1749600988638663</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
@@ -15,5 +16,10 @@
     <string name="sign_out_message">Are you sure you wish to sign out?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="google_sign_in_success">Google sign in success!</string>
+    <string name="google_sign_in_failed">Google sign in failed!</string>
+    <string name="facebook_sign_in_success">Facebook sign in success!</string>
+    <string name="facebook_sign_in_failed">Facebook sign in failed!</string>
+    <string name="facebook_sign_in_canceled">Facebook sign in canceled!</string>
 
 </resources>

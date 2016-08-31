@@ -12,6 +12,15 @@
     <com.google.android.gms.common.SignInButton
         android:id="@+id/google_sign_in_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/facebook_sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/google_sign_in_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
 
 </RelativeLayout>

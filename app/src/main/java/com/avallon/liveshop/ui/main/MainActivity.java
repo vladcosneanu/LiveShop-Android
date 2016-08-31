@@ -19,11 +19,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.android.volley.toolbox.Volley;
 import com.avallon.liveshop.R;
+import com.avallon.liveshop.models.BitmapLruCache;
 import com.avallon.liveshop.ui.main.favorites.FavoritesFragment;
 import com.avallon.liveshop.ui.main.friends.FriendsFragment;
 import com.avallon.liveshop.ui.main.home.HomeFragment;
 import com.avallon.liveshop.ui.signin.SignInActivity;
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private FriendsFragment friendsFragment;
     private TextView mUserNameTextView;
     private TextView mUserEmailTexVview;
+    private NetworkImageView mAvatarImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +82,12 @@ public class MainActivity extends AppCompatActivity
         mUserNameTextView.setText(currentUser.getDisplayName());
         mUserEmailTexVview = (TextView) headerView.findViewById(R.id.user_email_text);
         mUserEmailTexVview.setText(currentUser.getEmail());
+
+        ImageLoader.ImageCache imageCache = new BitmapLruCache();
+        ImageLoader imageLoader = new ImageLoader(Volley.newRequestQueue(this), imageCache);
+
+        mAvatarImageView = (NetworkImageView) headerView.findViewById(R.id.img_avatar);
+        mAvatarImageView.setImageUrl(currentUser.getPhotoUrl().toString(), imageLoader);
     }
 
     @Override
@@ -170,6 +182,8 @@ public class MainActivity extends AppCompatActivity
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 FirebaseAuth.getInstance().signOut();
+                LoginManager.getInstance().logOut();
+
                 Intent intent = new Intent(MainActivity.this, SignInActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
